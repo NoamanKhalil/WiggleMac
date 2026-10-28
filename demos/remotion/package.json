@@ -1,0 +1,17 @@
+{
+  "name": "wiggle-remotion-demo",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:player": "esbuild src/mount.tsx --bundle --outfile=../../assets/remotion-player.js --format=iife --platform=browser --jsx=automatic --define:process.env.NODE_ENV=\\\"production\\\""
+  },
+  "dependencies": {
+    "@remotion/player": "4.0.539",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.11"
+  }
+}

@@ -58,6 +58,8 @@ footer .frame > * { width: 100%; min-width: 0; max-width: 100%; }
   margin-bottom: 14px;
 }
 .paper .eyebrow { color: #8A5A00; }
+.paper .note-line { color: var(--on-paper-muted); }
+.paper .note-line a { color: #6B45B8; }
 .lede { margin-top: 18px; color: var(--on-ink-muted); font-size: 20px; max-width: 38rem; }
 .paper .lede, .doc .lede { color: var(--on-paper-muted); }
 .vh {
@@ -76,6 +78,7 @@ footer .frame > * { width: 100%; min-width: 0; max-width: 100%; }
 }
 .head-nav { display: flex; align-items: center; justify-content: flex-end; gap: 18px; width: auto; }
 .head-nav a { text-decoration: none; font-weight: 600; }
+.head-nav a[aria-current="page"] { color: var(--yellow); }
 .brand {
   display: inline-flex;
   align-items: center;
@@ -168,6 +171,20 @@ section:not(.paper) .cards p { color: var(--on-ink-muted); }
   min-width: 0;
 }
 .paper .cards article, .paper .qa article { border-color: var(--paper-line); background: #fffdf8; }
+#demos { background: #E9E3D6; }
+.demo-list { display: grid; gap: 36px; margin-top: 28px; }
+.demo-card { margin: 0; min-width: 0; }
+.demo-card figcaption { margin: 0 0 12px; color: var(--on-paper-muted); font-size: 16px; }
+.demo-card figcaption b { color: var(--on-paper); font-family: var(--display); font-size: 20px; }
+hyperframes-player, #remotion-demo {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  background: #14121A;
+  border-radius: 16px;
+  overflow: hidden;
+}
+hyperframes-player { aspect-ratio: 16 / 9; }
 .close { padding-bottom: 96px; }
 .doc { padding: 48px 0 72px; background: var(--paper); color: var(--on-paper); }
 .doc h1 { font-size: clamp(36px, 5vw, 56px); }
