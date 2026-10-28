@@ -2,7 +2,7 @@
 
 Wiggle takes a screenshot when you choose Screenshot, not in the background. On-device models keep that question on the Mac. Your own Claude or OpenAI key sends that question to the provider you chose. Screenshots are not sold.
 
-By Vicki, Noaman & Najia · October 22, 2026
+By Noaman · October 22, 2026
 ## Key points
 
 - A screenshot is a button you press for one question.

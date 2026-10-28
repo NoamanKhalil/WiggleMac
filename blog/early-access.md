@@ -2,7 +2,7 @@
 
 Wiggle is in early access for Mac. This site does not take payment and does not list a price. The $0.99 and $14.99 figures are the parody, not a plan.
 
-By Vicki, Noaman & Najia · October 19, 2026
+By Noaman · October 19, 2026
 ## Key points
 
 - Early access is an email, not a checkout.

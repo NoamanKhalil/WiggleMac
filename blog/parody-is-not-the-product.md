@@ -2,7 +2,7 @@
 
 The page at wigglemac.com/satire.html is a parody pitch. The Mac app is real. The billing, the numbers, and the ethics on that page are not.
 
-By Vicki, Noaman & Najia · October 18, 2026
+By Noaman · October 18, 2026
 ## Key points
 
 - The Mac app is real. The pitch at /satire.html is a parody.

@@ -2,7 +2,7 @@
 
 If you choose your own Claude or OpenAI key, that question goes to the provider you picked. Apple Intelligence and a local Ollama model run on your Mac and do not take that path.
 
-By Vicki, Noaman & Najia · October 23, 2026
+By Noaman · October 23, 2026
 ## Key points
 
 - The key is one you already have for Claude or OpenAI.

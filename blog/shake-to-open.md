@@ -2,7 +2,7 @@
 
 Shake the pointer back and forth five times, quickly, in under a second. Slow moves and drags are ignored. Wiggle then appears at the cursor.
 
-By Vicki, Noaman & Najia · October 26, 2026
+By Noaman · October 26, 2026
 ## Key points
 
 - Five back-and-forth strokes.

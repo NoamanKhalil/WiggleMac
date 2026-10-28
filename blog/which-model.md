@@ -2,7 +2,7 @@
 
 Wiggle works with Apple Intelligence, a local model through Ollama, or your own Claude or OpenAI key. The first two run on your Mac. A question you send with your own key goes to that provider.
 
-By Vicki, Noaman & Najia · October 24, 2026
+By Noaman · October 24, 2026
 ## Key points
 
 - Apple Intelligence runs on the Mac, on a Mac that has it.

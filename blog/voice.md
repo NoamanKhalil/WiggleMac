@@ -2,7 +2,7 @@
 
 No. Voice runs when you choose Voice. It is not a microphone that stays on and listens for everything else. That line is only on the parody page.
 
-By Vicki, Noaman & Najia · October 21, 2026
+By Noaman · October 21, 2026
 ## Key points
 
 - Voice is a mode, next to Chat and Screenshot.

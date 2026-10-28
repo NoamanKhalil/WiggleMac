@@ -2,7 +2,7 @@
 
 Wiggle is an early-access Mac app. Shake the mouse and it appears at the cursor, so you can chat, take a screenshot, or ask out loud about what is on screen.
 
-By Vicki, Noaman & Najia · October 27, 2026
+By Noaman · October 27, 2026
 ## Key points
 
 - Wiggle is a Mac app in early access, made by Jabble.
@@ -30,4 +30,4 @@ Wiggle is in early access. This site does not take payment, and it does not list
 ## Questions
 Does Wiggle run in the browser? No. The buttons on this website are a preview. They do not send a message, take a screenshot, or listen. The app is the Mac app.
 
-Who makes it? Vicki, Noaman, and Najia. Wiggle is a product of Jabble.
+Who makes it? Noaman. Wiggle is a product of Jabble.

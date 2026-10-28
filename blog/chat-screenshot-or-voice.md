@@ -2,7 +2,7 @@
 
 Wiggle gives you three choices each time it opens: Chat, Screenshot, or Voice. You pick one. A screenshot is not taken in the background, and voice is not an always-on microphone.
 
-By Vicki, Noaman & Najia · October 25, 2026
+By Noaman · October 25, 2026
 ## Key points
 
 - Three choices, every time Wiggle opens.

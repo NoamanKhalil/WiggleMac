@@ -2,7 +2,7 @@
 
 Wiggle does not ask you to make an account, and the app does not ship with analytics. This website does not sign you in. The only message we receive is an email you send yourself.
 
-By Vicki, Noaman & Najia · October 20, 2026
+By Noaman · October 20, 2026
 ## Key points
 
 - No Wiggle account.
