@@ -1,0 +1,12 @@
+.build/
+build/
+*.xcodeproj/xcuserdata/
+.swiftpm/
+.DS_Store
+
+# Remotion video
+video/node_modules/
+video/out/
+
+# Zipped copies made for uploading
+*.zip

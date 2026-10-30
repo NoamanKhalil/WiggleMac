@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:WiggleMac}",
+            "name": "Debug Wiggle",
+            "target": "Wiggle",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Wiggle"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:WiggleMac}",
+            "name": "Release Wiggle",
+            "target": "Wiggle",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Wiggle"
+        }
+    ]
+}
