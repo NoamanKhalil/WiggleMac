@@ -11,8 +11,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var panel: PromptPanelController?
     private var previousApp: NSRunningApplication?
+    private var updater: Updater?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        updater = Updater()
         setUpStatusItem()
 
         detector.isEnabled = settings.isEnabled
@@ -104,6 +106,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(item("Launch at Login", action: #selector(toggleLaunchAtLogin),
                               checked: SMAppService.mainApp.status == .enabled))
         }
+        if updater?.isAvailable == true {
+            menu.addItem(item("Check for Updates…", action: #selector(checkForUpdates)))
+        }
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit Wiggle", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     }
@@ -128,6 +133,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func showModels() {
         modelsWindow.show()
+    }
+
+    @objc private func checkForUpdates() {
+        updater?.checkForUpdates()
     }
 
     @objc private func selectSensitivity(_ sender: NSMenuItem) {

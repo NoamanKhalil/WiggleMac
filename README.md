@@ -28,6 +28,7 @@ Wiggle your mouse to summon an AI assistant right at your cursor. A spinning rai
 ```sh
 scripts/setup-signing.sh   # once: local signing identity so macOS remembers permissions across rebuilds
 make run                   # builds build/Wiggle.app and opens it
+make dmg                   # build/release/Wiggle-<version>.dmg to try on this Mac
 swift test                 # unit tests
 WIGGLE_INTEGRATION=1 swift test --filter IntegrationTests   # against local Ollama + Apple models
 ```
@@ -39,9 +40,33 @@ macOS asks for permissions the first time you use each feature:
 
 `setup-signing.sh` creates a self-signed certificate in its own keychain (`~/Library/Keychains/wiggle-signing.keychain-db`). It doesn't touch your login keychain. Without it, builds are signed ad-hoc and macOS forgets these permissions after every rebuild.
 
+## Releasing
+
+Other Macs only open Wiggle if it's signed with a Developer ID and notarized by Apple. One-time setup:
+
+1. Join the [Apple Developer Program](https://developer.apple.com/programs/), then create a **Developer ID Application** certificate (Xcode › Settings › Accounts › Manage Certificates).
+2. Save notarization credentials, using an [app-specific password](https://support.apple.com/102654):
+   ```sh
+   xcrun notarytool store-credentials wiggle-notary --apple-id YOU@example.com --team-id TEAMID
+   ```
+3. Back up the update-signing key. It's in your login Keychain as `wiggle`; without it, existing installs can never update again:
+   ```sh
+   .build/artifacts/sparkle/Sparkle/bin/generate_keys --account wiggle -x wiggle-sparkle-private.key
+   ```
+   Keep that file somewhere safe and private, not in this repo.
+
+Then, for each release, raise `CFBundleShortVersionString` in `Resources/Info.plist`, commit, and run:
+
+```sh
+WIGGLE_FEED_URL=https://example.com/updates/appcast.xml make release
+```
+
+This builds `build/release/Wiggle-<version>.dmg`, notarizes the app and the DMG (which uploads them to Apple), and writes `build/release/updates/appcast.xml`. Upload both files next to each other at the feed URL's address yourself. The build number is the commit count, so it rises with every commit. Without `WIGGLE_FEED_URL`, the app has no update feed and never checks for updates.
+
 ## Privacy
 
 - **Apple Intelligence and Ollama** run entirely on your Mac.
+- **Updates**: release builds check the update feed for new versions. Dev builds never do.
 - **Claude and OpenAI** receive only what you send them: your questions, and any screenshot you attach.
 
 ## Project layout
@@ -50,6 +75,7 @@ macOS asks for permissions the first time you use each feature:
 Sources/Wiggle/
   main.swift                   app entry (menu bar / accessory app)
   AppDelegate.swift            wires detector → cursor ring → panel; menu bar
+  Updater.swift                automatic updates (Sparkle)
   WiggleDetector.swift         shake detection
   ScreenLocator.swift          which display is under the pointer
   Settings.swift               preferences + ModelChoice
@@ -73,6 +99,8 @@ Sources/Wiggle/
     CursorGlow.swift           rainbow ring around the pointer
     Palette.swift              gradient colors
 Resources/Info.plist           bundle metadata + permission strings
-scripts/build-app.sh           SwiftPM build → signed .app bundle
+Resources/Wiggle.entitlements  hardened-runtime entitlements (microphone)
+scripts/build-app.sh           SwiftPM build → signed .app bundle with Sparkle
+scripts/release.sh             DMG, notarization and update feed
 scripts/setup-signing.sh       local code-signing identity
 ```

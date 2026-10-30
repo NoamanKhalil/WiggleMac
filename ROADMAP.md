@@ -1,6 +1,6 @@
 # Wiggle roadmap
 
-Last updated: October 17, 2026
+Last updated: October 30, 2026
 
 **Where we are.** The Mac app works: wiggle to open, the rainbow ring around the pointer, Chat, Screenshot and Voice, four ways to run models (Apple Intelligence, Ollama, Claude, OpenAI), and saving screenshots. The landing page is written (`site/index.html`) and pricing is set: Free, Pro at $19 once, and Teams at $15 per Mac. Nobody can download or pay yet.
 
@@ -24,10 +24,19 @@ Dates assume steady part-time work. Move them once we know the team's real capac
 
 **Goal:** a build people can install without security warnings, and that updates itself.
 
-- Fix git on the dev Mac (the copy in `/usr/local/bin` is an old Intel build: install Rosetta or Homebrew's git) and commit all current work.
-- Join the Apple Developer Program ($99 a year). Sign with a Developer ID and notarize in `scripts/build-app.sh`.
-- Package the app as a DMG, and add Sparkle for automatic updates.
-- Make the landing page's "Get the beta" button work. It opens an email to support@wigglemac.com, so make sure that inbox exists and someone reads it.
+**Status, Oct 30: the engineering is done. Four setup steps remain, and only the team can do them.**
+
+Done:
+- Git works on the dev Mac (Homebrew's git), and all work is committed on the `phase-0-foundation` branch.
+- `make dmg` packages the app as a DMG. `make release` signs with a Developer ID and the hardened runtime, notarizes and staples the app and the DMG, and writes the update feed.
+- Sparkle 2.10.1 is built in for automatic updates, with a "Check for Updates…" menu item. The update-signing key is in the login Keychain (`wiggle`).
+
+Waiting on the team:
+- [ ] Join the Apple Developer Program ($99 a year) and create a Developer ID Application certificate.
+- [ ] Save notarization credentials (README › Releasing). Notarizing uploads each build to Apple.
+- [ ] Back up the update-signing key somewhere safe and private.
+- [ ] Choose where the DMG and update feed live (for example, wigglemac.com/updates/), then run `make release` and upload them.
+- [ ] Set up email for support@wigglemac.com: the domain has no mail records, so the landing page's "Get the beta" emails bounce.
 
 **Done when:** a fresh Mac installs the beta with no warnings, and a new version installs itself.
 

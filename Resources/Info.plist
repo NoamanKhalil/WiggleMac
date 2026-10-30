@@ -32,6 +32,12 @@
     <string>Wiggle saves the screenshots you choose to keep in the same folder as your Mac's own screenshots.</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <!-- Sparkle: updates must be signed with the matching private key ("wiggle" in the login Keychain).
+         SUFeedURL is added at build time from WIGGLE_FEED_URL; without it, update checks stay off. -->
+    <key>SUPublicEDKey</key>
+    <string>2R/RPMAPHCTzy3pkR9hIs10LBYL3jk1NB6B2/yPtqRw=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key>
