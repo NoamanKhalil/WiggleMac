@@ -42,8 +42,7 @@
       </div>
       <aside class="preview" aria-label="Preview of Wiggle at the cursor">
         <p class="eyebrow">On this page</p>
-        <p class="preview-lead">Shake the pointer, or open the same four choices the app gives you.</p>
-        <button class="btn" id="open-wiggle" type="button">Open Wiggle here</button>
+        <p class="preview-lead">Shake the pointer. The same four choices appear.</p>
         <p class="hint">Five quick back-and-forth strokes. Slow moves are ignored. Nothing on this website is sent.</p>
       </aside>
     </div>
@@ -125,12 +124,18 @@
       <p class="lede">Two films of the same app. Press play. They do not send a message, take a screenshot, or listen.</p>
       <div class="demo-list">
         <figure class="demo-card">
-          <figcaption><b>Shake to open.</b> Hyperframes. Five quick strokes, then Chat, Screenshot, or Voice.</figcaption>
-          <hyperframes-player id="shake-demo" src="/demos/hyperframes/shake/index.html" controls width="1920" height="1080"></hyperframes-player>
+          <figcaption><b>Shake to open.</b> Five quick strokes, then Chat, Screenshot, Voice, or Workflow.</figcaption>
+          <div class="film">
+            <hyperframes-player id="shake-demo" src="/demos/hyperframes/shake/index.html?v=3" controls width="1920" height="1080"></hyperframes-player>
+            <button class="film-play" type="button" data-film="shake-demo"><span>Play</span></button>
+          </div>
         </figure>
         <figure class="demo-card">
-          <figcaption><b>Three ways to ask.</b> Remotion. Chat, a screenshot you choose, voice, then the model.</figcaption>
-          <div id="remotion-demo"></div>
+          <figcaption><b>Four ways to ask.</b> Chat, a screenshot you choose, voice, then a workflow you can replay.</figcaption>
+          <div class="film">
+            <div id="remotion-demo"></div>
+            <button class="film-play" type="button" data-film="remotion-demo"><span>Play</span></button>
+          </div>
         </figure>
       </div>
     </div>
@@ -364,10 +369,6 @@
     chooser.hidden = false;
     chooser.querySelector("button").focus({ preventScroll: true });
   });
-  document.getElementById("open-wiggle").addEventListener("click", (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    open(rect.left, rect.bottom);
-  });
   const choiceKeys = { c: "chat", s: "screenshot", v: "voice", w: "workflow" };
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !pop.hidden) {
@@ -382,7 +383,7 @@
     showChoice(choice);
   });
   document.addEventListener("pointerdown", (event) => {
-    if (!pop.hidden && !pop.contains(event.target) && event.target.id !== "open-wiggle") close();
+    if (!pop.hidden && !pop.contains(event.target)) close();
   });
 
   const WINDOW = 900, MIN_STROKE = 40, REQUIRED = 5, COOLDOWN = 1200;
@@ -421,6 +422,43 @@
 </script>
 
 <script src="/assets/hyperframes-player.global.js"></script>
-<script src="/assets/remotion-player.js"></script>
+<script src="/assets/remotion-player.js?v=4"></script>
+<script>
+document.querySelectorAll(".film-play").forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const film = button.closest(".film");
+    const id = button.getAttribute("data-film");
+    const player = film && id ? film.querySelector("#" + id) : null;
+    const start = () => {
+      if (!player) return false;
+      if (player.__player && typeof player.__player.play === "function") {
+        player.__player.play();
+        return true;
+      }
+      if (typeof player.play === "function") {
+        player.play();
+        return true;
+      }
+      const control = player.querySelector('[aria-label="Play video"]');
+      if (control) {
+        control.click();
+        return true;
+      }
+      return false;
+    };
+    if (!start()) {
+      let tries = 0;
+      const timer = setInterval(() => {
+        if (start() || ++tries > 30) clearInterval(timer);
+      }, 100);
+    }
+    requestAnimationFrame(() => {
+      button.hidden = true;
+    });
+  });
+});
+</script>
 </body>
 </html>

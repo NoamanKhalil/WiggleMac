@@ -37797,74 +37797,28 @@ Check that all your Remotion packages are on the same version. If your dependenc
   // src/WiggleAsk.tsx
   var import_jsx_runtime66 = __toESM(require_jsx_runtime());
   var FPS = 30;
-  var DURATION = 360;
+  var DURATION = 420;
   var ink = "#14121A";
   var paper = "#F3EFE6";
   var muted = "#B9B4C4";
   var gold = "#8A5A00";
-  var fade = (frame, start, end) => {
-    if (frame < start || frame > end) return 0;
-    const fadeIn = start === 0 ? 1 : interpolate(frame, [start, start + 12], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp"
-    });
-    const fadeOut = end >= DURATION - 1 ? 1 : interpolate(frame, [end - 12, end], [1, 0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp"
-    });
-    return Math.min(fadeIn, fadeOut);
-  };
-  var Card = ({
-    kicker,
-    title,
-    body,
-    opacity: opacity2
-  }) => /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(AbsoluteFill, { style: { opacity: opacity2, justifyContent: "center", alignItems: "center", padding: 120 }, children: /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(
-    "div",
-    {
-      style: {
-        width: 1280,
-        background: "#fffdf8",
-        color: ink,
-        borderRadius: 36,
-        padding: "64px 72px"
-      },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-          "p",
-          {
-            style: {
-              margin: 0,
-              fontFamily: '"Space Grotesk", sans-serif',
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              fontSize: 28,
-              color: gold
-            },
-            children: kicker
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-          "h2",
-          {
-            style: {
-              margin: "18px 0 0",
-              fontFamily: '"Space Grotesk", sans-serif',
-              fontWeight: 700,
-              fontSize: 92,
-              letterSpacing: "-0.04em",
-              lineHeight: 1.02
-            },
-            children: title
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "28px 0 0", fontSize: 40, lineHeight: 1.35, color: "#4A4656" }, children: body })
-      ]
-    }
-  ) });
+  var clamp = (frame, start, end) => interpolate(frame, [start, end], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  var choices = [
+    { key: "C", label: "Chat", line: "Ask about whatever is on screen.", at: 150 },
+    { key: "S", label: "Screenshot", line: "You choose the screenshot.", at: 210 },
+    { key: "V", label: "Voice", line: "Ask out loud. It does not stay on.", at: 270 },
+    { key: "W", label: "Workflow", line: "Replay the clicks and typing you saved.", at: 330, ring: true }
+  ];
   var WiggleAsk = () => {
     const frame = useCurrentFrame();
+    const shake = frame < 70 || frame > 130 ? 0 : Math.sin((frame - 70) / 8 * Math.PI) * interpolate(frame, [70, 110, 130], [0, 70, 0], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    });
+    const rainbow = clamp(frame, 118, 136);
+    const pop = clamp(frame, 140, 162);
+    const active = [...choices].reverse().find((choice) => frame >= choice.at) ?? null;
+    const caption = frame < 70 ? "You are stuck on something already on screen." : frame < 140 ? "Shake the pointer. Five quick strokes." : frame < 330 ? "Wiggle opens at the cursor." : "Chat, Screenshot, Voice, or Workflow.";
     return /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(AbsoluteFill, { style: { background: ink, color: paper, fontFamily: "Inter, sans-serif" }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
         "div",
@@ -37879,70 +37833,122 @@ Check that all your Remotion packages are on the same version. If your dependenc
           }
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(AbsoluteFill, { style: { opacity: fade(frame, 0, 70), justifyContent: "center", padding: 140 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: 0, color: muted, fontSize: 32, letterSpacing: "0.14em", textTransform: "uppercase" }, children: "Wiggle for Mac" }),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-          "h1",
-          {
-            style: {
-              margin: "18px 0 0",
-              fontFamily: '"Space Grotesk", sans-serif',
-              fontWeight: 700,
-              fontSize: 120,
-              letterSpacing: "-0.045em",
-              lineHeight: 0.98
-            },
-            children: "Three ways to ask."
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "28px 0 0", fontSize: 42, color: muted, maxWidth: 1200 }, children: "You pick one each time Wiggle opens. This film does not send a message." })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-        Card,
+      /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(
+        "div",
         {
-          kicker: "1 \xB7 Chat",
-          title: "Ask in writing.",
-          body: "About whatever is already on screen, without leaving the spot where you got stuck.",
-          opacity: fade(frame, 70, 150)
+          style: {
+            position: "absolute",
+            left: 140,
+            right: 140,
+            top: 150,
+            bottom: 210,
+            borderRadius: 28,
+            background: "#1F1C27",
+            boxShadow: "inset 0 0 0 1px #2E2A38",
+            overflow: "hidden"
+          },
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)("div", { style: { position: "absolute", left: 72, top: 64, right: 1e3 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "0 0 28px", fontFamily: '"Space Grotesk", sans-serif', fontSize: 28, letterSpacing: "0.08em", textTransform: "uppercase", color: muted }, children: "On screen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "0 0 18px", fontSize: 42, lineHeight: 1.35 }, children: "The page you were already reading." }),
+              /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: 0, fontSize: 42, lineHeight: 1.35, color: "#8A8696" }, children: "You do not have to go find a chat window." })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(
+              "svg",
+              {
+                viewBox: "0 0 24 32",
+                width: "48",
+                height: "64",
+                style: { position: "absolute", left: 780 + shake, top: 280 },
+                "aria-hidden": "true",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)("linearGradient", { id: "cursor-g", x1: "0", y1: "0", x2: "1", y2: "1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("stop", { offset: "0", stopColor: "#4285F5" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("stop", { offset: "0.35", stopColor: "#E36194" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("stop", { offset: "0.7", stopColor: "#FABD1A" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("stop", { offset: "1", stopColor: "#38B366" })
+                  ] }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
+                    "path",
+                    {
+                      d: "M2 2v22l5.2-4.8 3.6 8.3 3.6-1.5-3.5-8.1H18z",
+                      fill: rainbow > 0.5 ? "url(#cursor-g)" : paper,
+                      stroke: rainbow > 0.5 ? "#fff" : ink,
+                      strokeWidth: "1.6",
+                      strokeLinejoin: "round"
+                    }
+                  )
+                ]
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(
+              "div",
+              {
+                style: {
+                  position: "absolute",
+                  left: 680,
+                  top: 150,
+                  width: 760,
+                  padding: 28,
+                  borderRadius: 28,
+                  background: "#fffdf8",
+                  color: ink,
+                  boxShadow: "0 24px 60px rgba(0,0,0,.35)",
+                  opacity: pop,
+                  transform: `translateY(${(1 - pop) * 16}px)`
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: 0, fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", fontSize: 22, color: gold }, children: "Wiggle" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 22 }, children: choices.map((choice) => {
+                    const on = active?.key === choice.key;
+                    return /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(
+                      "div",
+                      {
+                        style: {
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "18px 18px",
+                          borderRadius: 16,
+                          background: on ? ink : paper,
+                          color: on ? paper : ink,
+                          border: "2px solid #D9D2C3",
+                          fontFamily: '"Space Grotesk", sans-serif',
+                          fontWeight: 700,
+                          fontSize: 28
+                        },
+                        children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)("span", { children: [
+                            choice.ring ? /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("span", { style: { display: "inline-block", width: 16, height: 16, marginRight: 8, border: "3px solid #E23B2F", borderRadius: "50%" } }) : null,
+                            choice.label
+                          ] }),
+                          /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
+                            "span",
+                            {
+                              style: {
+                                fontSize: 20,
+                                color: on ? "#FABD1A" : gold,
+                                border: `2px solid ${on ? "#3A3544" : "#D9D2C3"}`,
+                                borderRadius: 8,
+                                padding: "2px 8px",
+                                background: on ? "transparent" : "#fffdf8"
+                              },
+                              children: choice.key
+                            }
+                          )
+                        ]
+                      },
+                      choice.key
+                    );
+                  }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "18px 0 0", minHeight: 40, fontSize: 26, color: "#4A4656" }, children: active ? active.line : "Pick one. Nothing is sent until you do." })
+                ]
+              }
+            )
+          ]
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-        Card,
-        {
-          kicker: "2 \xB7 Screenshot",
-          title: "You choose the picture.",
-          body: "A screenshot happens when you pick Screenshot. It is not taken while you work.",
-          opacity: fade(frame, 150, 230)
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-        Card,
-        {
-          kicker: "3 \xB7 Voice",
-          title: "Ask out loud.",
-          body: "Voice is a mode you pick, like Chat or Screenshot. It is not a microphone that stays on.",
-          opacity: fade(frame, 230, 310)
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime66.jsxs)(AbsoluteFill, { style: { opacity: fade(frame, 310, 360), justifyContent: "center", padding: 140 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: 0, color: gold, fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", fontSize: 28 }, children: "The model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)(
-          "h2",
-          {
-            style: {
-              margin: "18px 0 0",
-              fontFamily: '"Space Grotesk", sans-serif',
-              fontWeight: 700,
-              fontSize: 78,
-              letterSpacing: "-0.04em",
-              lineHeight: 1.05,
-              maxWidth: 1500
-            },
-            children: "Apple Intelligence, Ollama, or your own key."
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: "28px 0 0", fontSize: 36, color: muted }, children: "Early access. No account." })
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("div", { style: { position: "absolute", left: 120, right: 120, bottom: 48, textAlign: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime66.jsx)("p", { style: { margin: 0, fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, fontSize: 48, letterSpacing: "-0.03em" }, children: caption }) })
     ] });
   };
 
@@ -37954,6 +37960,9 @@ Check that all your Remotion packages are on the same version. If your dependenc
       /* @__PURE__ */ (0, import_jsx_runtime67.jsx)(
         Player,
         {
+          ref: (player) => {
+            if (player) root.__player = player;
+          },
           component: WiggleAsk,
           durationInFrames: DURATION,
           compositionWidth: 1920,

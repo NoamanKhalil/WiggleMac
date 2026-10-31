@@ -32,6 +32,6 @@ On this website, the same gesture opens a preview. That preview does not send an
 Shake faster, not wider. A long slow sweep is still one move. If you are on a trackpad, a few short flicks work better than one big swipe.
 
 ## Questions
-Can I open it without shaking? On the website, Open Wiggle here does the same preview. In the Mac app, the shake is the way it appears.
+Can I open it without shaking? In the Mac app, the shake is the way it appears. On this website, the same shake opens a preview.
 
 Does the shake hide my cursor until I pay? No. The pointer turns into a rainbow arrow, and you are still looking at the same place on screen.

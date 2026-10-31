@@ -41,7 +41,7 @@
     position: absolute;
     left: 72px;
     top: 64px;
-    right: 420px;
+    right: 940px;
   }
   .doc .file {
     font-family: "Space Grotesk", sans-serif;
@@ -69,9 +69,9 @@
   #cursor-rainbow { opacity: 0; }
   #pop {
     position: absolute;
-    left: 860px;
-    top: 250px;
-    width: 640px;
+    left: 760px;
+    top: 70px;
+    width: 700px;
     padding: 28px;
     border-radius: 28px;
     background: #fffdf8;
@@ -89,21 +89,33 @@
     color: #8A5A00;
   }
   .choices {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-top: 18px;
+    margin-top: 22px;
   }
   .choice {
     position: relative;
-    flex: 1;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
-    font-size: 32px;
-    padding: 16px 8px;
+    font-size: 26px;
+    padding: 14px 16px;
     border-radius: 16px;
     background: #F3EFE6;
     border: 2px solid #D9D2C3;
+  }
+  .choice kbd {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 20px;
+    color: #8A5A00;
+    border: 2px solid #D9D2C3;
+    border-radius: 8px;
+    padding: 2px 8px;
+    background: #fffdf8;
   }
   .choice .on {
     position: absolute;
@@ -111,8 +123,36 @@
     border-radius: 16px;
     background: #14121A;
     color: #F3EFE6;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    opacity: 0;
+  }
+  .choice .on kbd {
+    color: #FABD1A;
+    border-color: #3A3544;
+    background: transparent;
+  }
+  .ring {
+    width: 16px;
+    height: 16px;
+    border: 3px solid #E23B2F;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+  }
+  .detail {
+    position: relative;
+    height: 40px;
+    margin: 18px 0 0;
+    font-size: 26px;
+    color: #4A4656;
+  }
+  .detail span {
+    position: absolute;
+    left: 0;
+    right: 0;
     opacity: 0;
   }
   .caption {
@@ -171,10 +211,17 @@
       <div id="pop">
         <p class="kicker">Wiggle</p>
         <div class="choices">
-          <span class="choice">Chat<span class="on" id="chat-on">Chat</span></span>
-          <span class="choice">Screenshot</span>
-          <span class="choice">Voice</span>
+          <span class="choice" id="c-chat">Chat <kbd>C</kbd><span class="on">Chat <kbd>C</kbd></span></span>
+          <span class="choice" id="c-shot">Screenshot <kbd>S</kbd><span class="on">Screenshot <kbd>S</kbd></span></span>
+          <span class="choice" id="c-voice">Voice <kbd>V</kbd><span class="on">Voice <kbd>V</kbd></span></span>
+          <span class="choice" id="c-work"><span><span class="ring"></span>Workflow</span> <kbd>W</kbd><span class="on"><span><span class="ring"></span>Workflow</span> <kbd>W</kbd></span></span>
         </div>
+        <p class="detail">
+          <span id="d-chat">Ask about whatever is on screen.</span>
+          <span id="d-shot">You choose the screenshot.</span>
+          <span id="d-voice">Ask out loud. It does not stay on.</span>
+          <span id="d-work">Replay the clicks and typing you saved.</span>
+        </p>
       </div>
     </div>
   </section>
@@ -189,7 +236,7 @@
     <p>Wiggle opens at the cursor.</p>
   </section>
   <section id="cap-pick" class="clip caption" data-start="9.2" data-duration="3.6" data-track-index="2">
-    <p>Pick Chat, Screenshot, or Voice. Nothing is taken until you do.</p>
+    <p>Chat, Screenshot, Voice, or Workflow.</p>
   </section>
   <section id="cap-end" class="clip caption" data-start="12.8" data-duration="3.2" data-track-index="2">
     <p>Early access for Mac. This demo sends nothing.</p>
@@ -206,7 +253,20 @@
   timeline.fromTo("#cursor-plain", { opacity: 1 }, { opacity: 0, duration: 0.25 }, 4.45);
   timeline.fromTo("#cursor-rainbow", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 4.45);
   timeline.fromTo("#pop", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 5.1);
-  timeline.fromTo("#chat-on", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 9.35);
+  const picks = [
+    ["#c-chat .on", "#d-chat", 6.4],
+    ["#c-shot .on", "#d-shot", 8.2],
+    ["#c-voice .on", "#d-voice", 10.0],
+    ["#c-work .on", "#d-work", 11.8]
+  ];
+  picks.forEach(([face, line, at], index) => {
+    timeline.fromTo(face, { opacity: 0 }, { opacity: 1, duration: 0.25 }, at);
+    timeline.fromTo(line, { opacity: 0 }, { opacity: 1, duration: 0.25 }, at);
+    if (index < picks.length - 1) {
+      timeline.to(face, { opacity: 0, duration: 0.2 }, picks[index + 1][2] - 0.15);
+      timeline.to(line, { opacity: 0, duration: 0.2 }, picks[index + 1][2] - 0.15);
+    }
+  });
   timeline.set({}, {}, 16);
   window.__timelines = window.__timelines || {};
   window.__timelines["wiggle-shake"] = timeline;
