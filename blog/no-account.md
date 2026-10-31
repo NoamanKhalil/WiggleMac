@@ -11,7 +11,7 @@ By Noaman · October 20, 2026
 - An email you send to hello@jabble.si is the only message we receive from you here.
 
 ## What a visit stores
-Reading these pages does not create a profile. There is no score, and there is no manager to send one to. That last idea is only on the parody page.
+Reading these pages does not create a profile. There is no score, and there is no manager to send one to.
 
 Privacy (/privacy.html) is the short policy. Your data (/your-data.html) says what this website itself keeps, which is nothing beyond the email you choose to write.
 
@@ -21,7 +21,7 @@ Loading a page does not create a Wiggle profile. There is no cookie banner becau
 ## Email
 Early access is an email to hello@jabble.si (mailto:hello@jabble.si). That message is the one you wrote. It is not a form that builds a score.
 
-The parody page’s “disengagement event” sent to your manager is fiction.
+Wiggle does not send a score to a manager.
 
 ## Questions
 Where is the privacy page? The short policy is at Privacy (/privacy.html), and what this site stores is at Your data (/your-data.html).

@@ -11,7 +11,7 @@ By Noaman · October 23, 2026
 - This website never asks you to paste a key.
 
 ## What we do not do with it
-The parody page says a key lives in your Keychain and in ours. Only the first half is a description of a key you keep. Wiggle does not ask this website for a key, and the product does not describe a second copy kept by Jabble.
+A key you use stays with you. Wiggle does not ask this website for a key, and it does not keep a second copy.
 
 If you never choose that path, the question stays with Apple Intelligence or with Ollama. Those do not use your Claude or OpenAI key.
 
@@ -21,7 +21,7 @@ Wiggle can call Claude or OpenAI with a key you already have. Wiggle is not sell
 ## What leaves the Mac
 The question you send with that key leaves the Mac, because that is how those APIs work. Apple Intelligence and Ollama do not use that path.
 
-The parody page says your keys live in your Keychain and in ours. The second half is the joke. This site does not ask for your API key.
+This site does not ask for your API key.
 
 ## What we list
 Jabble’s promise for Wiggle is that anything the app sends is listed for you to see. A key you never hand over is not sent.

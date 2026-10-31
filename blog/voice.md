@@ -1,6 +1,6 @@
 # Does Wiggle listen all the time?
 
-No. Voice runs when you choose Voice. It is not a microphone that stays on and listens for everything else. That line is only on the parody page.
+No. Voice runs when you choose Voice. It is not a microphone that stays on and listens for everything else.
 
 By Noaman · October 21, 2026
 ## Key points
@@ -11,13 +11,10 @@ By Noaman · October 21, 2026
 - The website preview does not listen.
 
 ## How to tell
-Wiggle closed means you have not picked Voice. The parody page is the one that claims the microphone hears the word “screenshot” and everything else. That sentence is labeled as parody, on the parody page, and it is not a setting in the app.
+Wiggle closed means you have not picked Voice. The microphone is not a setting that runs in the background.
 
 ## What Voice is
 Voice is how you ask out loud about what is on screen. You pick it the same way you pick Chat or Screenshot, each time Wiggle opens.
-
-## What the parody says
-The parody page says Wiggle listens for the word “screenshot” and for everything else. That is part of the joke. It is not a feature of the Mac app.
 
 The preview on this website does not listen either. The dialog says so.
 

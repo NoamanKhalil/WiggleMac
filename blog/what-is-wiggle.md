@@ -22,7 +22,7 @@ Wiggle is the assistant for the moment you are stuck. You do not go looking for 
 From there you pick one of three ways to ask: Chat, Screenshot, or Voice. The model can be Apple Intelligence, a local model through Ollama, or your own Claude or OpenAI key.
 
 ## What it is not
-The page at the parody pitch (/satire.html) is a joke about charging people for being stuck. The prices, the hidden cursor, and the manager scoreboard on that page are not the product. The parody pitch is not the product (/blog/parody-is-not-the-product/) says which lines are fiction.
+Wiggle does not ask you to make an account, and this site does not list a price. A screenshot happens when you choose Screenshot. Voice runs when you choose Voice.
 
 ## Early access
 Wiggle is in early access. This site does not take payment, and it does not list a price. Write to hello@jabble.si (mailto:hello@jabble.si) if you want to try the Mac app.

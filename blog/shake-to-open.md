@@ -34,4 +34,4 @@ Shake faster, not wider. A long slow sweep is still one move. If you are on a tr
 ## Questions
 Can I open it without shaking? On the website, Open Wiggle here does the same preview. In the Mac app, the shake is the way it appears.
 
-Does the shake hide my cursor until I pay? No. That is a line from the parody page.
+Does the shake hide my cursor until I pay? No. The pointer turns into a rainbow arrow, and you are still looking at the same place on screen.
