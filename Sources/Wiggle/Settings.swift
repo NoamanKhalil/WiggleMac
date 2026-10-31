@@ -89,6 +89,24 @@ final class Settings {
         set { defaults.set(newValue.storageValue, forKey: "model") }
     }
 
+    /// Lets the Photon bridge on this Mac pass on texts. Off until turned on in the menu bar.
+    var allowsTexting: Bool {
+        get { defaults.bool(forKey: "allowsTexting") }
+        set { defaults.set(newValue, forKey: "allowsTexting") }
+    }
+
+    /// Photon project for texting; its secret is in the Keychain.
+    var photonProjectID: String {
+        get { defaults.string(forKey: "photonProjectID") ?? "" }
+        set { defaults.set(newValue, forKey: "photonProjectID") }
+    }
+
+    /// The phone number (or Apple ID email) texts must come from.
+    var textingFrom: String {
+        get { defaults.string(forKey: "textingFrom") ?? "" }
+        set { defaults.set(newValue, forKey: "textingFrom") }
+    }
+
     var sensitivity: Sensitivity {
         get { Sensitivity(rawValue: defaults.string(forKey: "sensitivity") ?? "") ?? .medium }
         set { defaults.set(newValue.rawValue, forKey: "sensitivity") }

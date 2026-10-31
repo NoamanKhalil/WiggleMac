@@ -68,7 +68,7 @@ final class PromptPanelController: NSObject, NSWindowDelegate {
     }
 
     func dismiss() {
-        model.cancel()
+        model.close()
         panel.delegate = nil
         panel.orderOut(nil)
         onDismiss?()
@@ -115,6 +115,8 @@ private struct PromptView: View {
                 switch model.stage {
                 case .choosing: ChooserCard(model: model)
                 case .chat: ChatCard(model: model)
+                case .workflows: WorkflowCard(model: model)
+                case .saveWorkflow: SaveWorkflowCard(model: model)
                 }
             }
             .frame(maxWidth: .infinity, alignment: leansLeft ? .trailing : .leading)
@@ -127,7 +129,7 @@ private struct PromptView: View {
 }
 
 /// Glass card with the multicolor border that spins while busy.
-private struct CardBackground: ViewModifier {
+struct CardBackground: ViewModifier {
     let isBusy: Bool
 
     func body(content: Content) -> some View {
@@ -154,6 +156,7 @@ private struct ChooserCard: View {
             ChoiceTile(icon: "bubble.left.fill", title: "Chat", key: "C") { model.choose(.chat) }
             ChoiceTile(icon: "camera.viewfinder", title: "Screenshot", key: "S") { model.choose(.screenshot) }
             ChoiceTile(icon: "mic.fill", title: "Voice", key: "V") { model.choose(.voice) }
+            ChoiceTile(icon: "record.circle", title: "Workflow", key: "W") { model.choose(.workflow) }
         }
         .padding(4)
         .fixedSize()
@@ -210,6 +213,9 @@ private struct ChatCard: View {
             if let attachment = model.attachment {
                 AttachmentChip(model: model, screenshot: attachment) { model.attachment = nil }
             }
+            if let workflow = model.editingWorkflow {
+                WorkflowChip(workflow: workflow) { model.stopChangingWorkflow() }
+            }
             inputRow
             footer
         }
@@ -223,6 +229,7 @@ private struct ChatCard: View {
         if model.listener.isListening { return "Listening… (say “screenshot”)" }
         if model.isCapturing { return "Capturing…" }
         if model.attachment != nil { return "Ask about this screen…" }
+        if model.editingWorkflow != nil { return "Who's it for, or what should change?" }
         return model.turns.isEmpty ? "Ask anything…" : "Ask a follow-up…"
     }
 
@@ -324,7 +331,10 @@ private struct NoticeRow: View {
                 .fixedSize(horizontal: false, vertical: true)
             if let url = notice.settingsURL {
                 Spacer(minLength: 4)
-                Button("Settings") { NSWorkspace.shared.open(url) }
+                Button("Settings") {
+                    notice.beforeSettings?()
+                    NSWorkspace.shared.open(url)
+                }
                     .controlSize(.mini)
             }
         }
@@ -353,6 +363,28 @@ private struct AttachmentChip: View {
             Spacer()
             SaveScreenshotButton(model: model, screenshot: screenshot)
             IconButton(symbol: "xmark.circle.fill", help: "Remove screenshot", action: onRemove)
+        }
+        .padding(.horizontal, 10)
+        .padding(.top, 8)
+    }
+}
+
+/// The workflow the chat is changing.
+private struct WorkflowChip: View {
+    let workflow: Workflow
+    let onRemove: () -> Void
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "record.circle")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.red)
+            Text("Changing “\(workflow.name)”")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            Spacer()
+            IconButton(symbol: "xmark.circle.fill", help: "Stop changing this workflow", action: onRemove)
         }
         .padding(.horizontal, 10)
         .padding(.top, 8)
@@ -410,16 +442,331 @@ private struct TurnView: View {
                 ProgressView()
                     .controlSize(.mini)
             } else {
-                Text(rendered)
-                    .font(.system(size: 12.5))
-                    .textSelection(.enabled)
+                if !reply.prose.isEmpty {
+                    Text(rendered)
+                        .font(.system(size: 12.5))
+                        .textSelection(.enabled)
+                }
+                if let workflow = turn.workflow, !reply.edits.isEmpty, !isStreaming {
+                    WorkflowChangesView(model: model, turn: turn, workflow: workflow, edits: reply.edits)
+                }
             }
         }
     }
 
+    /// A reply about a workflow, with its changes taken out of the text.
+    private var reply: (prose: String, edits: WorkflowEdits) {
+        turn.workflow == nil ? (turn.response, WorkflowEdits()) : WorkflowEdits.parse(turn.response)
+    }
+
     /// Inline markdown (bold, code, links) while keeping the model's line breaks.
     private var rendered: AttributedString {
+        let text = reply.prose
         let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        return (try? AttributedString(markdown: turn.response, options: options)) ?? AttributedString(turn.response)
+        return (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
+    }
+}
+
+/// What a reply would change in a workflow, in full, so nothing is typed that wasn't read first.
+private struct WorkflowChangesView: View {
+    let model: PromptModel
+    let turn: PromptModel.Turn
+    let workflow: Workflow
+    let edits: WorkflowEdits
+
+    var body: some View {
+        let groups = WorkflowStepGroup.groups(for: workflow.steps)
+        let problems = edits.problems(in: workflow.steps)
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(edits.texts.keys.sorted().filter { !edits.removed.contains($0) }, id: \.self) { step in
+                VStack(alignment: .leading, spacing: 2) {
+                    if let problem = problems[step] {
+                        Label(problem, systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 10.5, weight: .medium))
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text("Step \(step) now types “\(groups[step - 1].text ?? "")”")
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                            .truncationMode(.middle)
+                        Text("It will type:")
+                            .font(.system(size: 10.5, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(edits.texts[step] ?? "")
+                        .font(.system(size: 12))
+                        .textSelection(.enabled)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(problems[step] == nil ? 1 : 0.5)
+                }
+            }
+            ForEach(edits.removed.sorted(), id: \.self) { step in
+                Label(problems[step] ?? "Remove step \(step): \(groups[step - 1].title)",
+                      systemImage: problems[step] == nil ? "minus.circle" : "exclamationmark.triangle.fill")
+                    .font(.system(size: 11))
+                    .foregroundStyle(problems[step] == nil ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            HStack {
+                Spacer()
+                if !problems.isEmpty {
+                    Text("Can't save: ask again, saying which step to change")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                } else if let saved = model.savedWorkflow(for: turn) {
+                    Label("Saved as “\(saved.name)”", systemImage: "checkmark")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    // No keyboard shortcut: Return sends the next message, and a run types into another app.
+                    Button("Run") { model.runSavedWorkflow(for: turn) }
+                } else {
+                    Button(workflow.editedFrom == nil ? "Save as edited copy" : "Save changes") { model.applyChanges(from: turn) }
+                        .help(workflow.editedFrom == nil ? "Saves to “\(workflow.name) (edited)” and keeps the original as recorded" : "")
+                }
+            }
+            .controlSize(.small)
+        }
+        .padding(8)
+        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+// MARK: - Workflows
+
+private struct WorkflowCard: View {
+    @Bindable var model: PromptModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 6) {
+                Image(systemName: "record.circle")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Palette.sweep(angle: .degrees(0)))
+                Text("Workflows")
+                    .font(.system(size: 12.5, weight: .semibold))
+                Spacer()
+                Button {
+                    model.recordWorkflow()
+                } label: {
+                    Label("Record", systemImage: "record.circle.fill")
+                        .font(.system(size: 11.5, weight: .semibold))
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+                .controlSize(.small)
+                .help("Record clicks, typing and scrolling. Esc pauses; wiggle again to stop.")
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 9)
+            .padding(.bottom, 7)
+
+            if let notice = model.notice {
+                NoticeRow(notice: notice)
+                    .padding(.bottom, 6)
+            }
+
+            if model.workflows.workflows.isEmpty {
+                Text("Record clicks, typing and scrolling in any app, then replay them at the same spots on screen. Esc pauses recording; wiggle again to stop.")
+                    .font(.system(size: 11.5))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 10)
+            } else {
+                Divider().opacity(0.5)
+                ScrollView {
+                    VStack(spacing: 1) {
+                        ForEach(model.workflows.workflows) { workflow in
+                            WorkflowRow(workflow: workflow,
+                                        onRun: { model.run(workflow) },
+                                        onRename: { model.renameWorkflow(workflow, to: $0) },
+                                        onChat: { model.changeWithChat(workflow) },
+                                        onDelete: { model.deleteWorkflow(workflow) })
+                        }
+                    }
+                    .padding(4)
+                }
+                .frame(maxHeight: 220)
+                .fixedSize(horizontal: false, vertical: true)
+                Divider().opacity(0.5)
+                HStack(spacing: 6) {
+                    Stepper(value: $model.repeatCount, in: 1...99) {
+                        Text("Run \(model.repeatCount)×")
+                            .monospacedDigit()
+                    }
+                    .controlSize(.mini)
+                    Spacer()
+                    Text("esc pauses · wiggle stops")
+                        .foregroundStyle(.tertiary)
+                }
+                .font(.system(size: 10.5))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+            }
+        }
+        .frame(width: PromptPanelController.size.width - 16)
+        .modifier(CardBackground(isBusy: false))
+    }
+}
+
+private struct WorkflowRow: View {
+    let workflow: Workflow
+    let onRun: () -> Void
+    let onRename: (String) -> Void
+    let onChat: () -> Void
+    let onDelete: () -> Void
+
+    @State private var isHovered = false
+    @State private var confirmingDelete = false
+    @State private var isRenaming = false
+    @State private var draftName = ""
+    @FocusState private var nameFocused: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
+                if isRenaming {
+                    TextField("Name", text: $draftName)
+                        .textFieldStyle(.roundedBorder)
+                        .controlSize(.small)
+                        .font(.system(size: 12, weight: .medium))
+                        .focused($nameFocused)
+                        .onAppear { nameFocused = true }
+                        .onSubmit(finishRenaming)
+                        .onExitCommand { isRenaming = false }
+                } else {
+                    Text(workflow.name)
+                        .font(.system(size: 12, weight: .medium))
+                        .lineLimit(1)
+                        .onTapGesture(count: 2, perform: startRenaming)
+                        .help("Double-click to rename")
+                }
+                Text(workflow.summary)
+                    .font(.system(size: 10.5))
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 4)
+            if isRenaming {
+                // Renaming: just the field and play.
+            } else if confirmingDelete {
+                Button("Delete", role: .destructive, action: onDelete)
+                    .controlSize(.mini)
+            } else if isHovered {
+                IconButton(symbol: "pencil", help: "Rename workflow", action: startRenaming)
+                IconButton(symbol: "text.bubble", help: "Change what it types with chat", action: onChat)
+                IconButton(symbol: "trash", help: "Delete workflow") { confirmingDelete = true }
+            }
+            IconButton(symbol: "play.fill", help: "Run \(workflow.name)", tint: .primary) {
+                finishRenaming()
+                onRun()
+            }
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 38)
+        .background(
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(isHovered ? Color.primary.opacity(0.06) : .clear)
+        )
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            isHovered = hovering
+            if !hovering { confirmingDelete = false }
+        }
+        // Clicking away keeps the new name; Esc drops it.
+        .onChange(of: nameFocused) { _, focused in
+            if !focused { finishRenaming() }
+        }
+    }
+
+    private func startRenaming() {
+        confirmingDelete = false
+        draftName = workflow.name
+        isRenaming = true
+    }
+
+    private func finishRenaming() {
+        guard isRenaming else { return }
+        isRenaming = false
+        onRename(draftName)
+    }
+}
+
+private struct SaveWorkflowCard: View {
+    @Bindable var model: PromptModel
+
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        let groups = WorkflowStepGroup.groups(for: model.recording)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 6) {
+                Image(systemName: "record.circle.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.red)
+                Text(model.recording.isEmpty ? "Nothing was recorded" : "Recorded \(Workflow.summary(of: model.recording))")
+                    .font(.system(size: 12.5, weight: .semibold))
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 9)
+            .padding(.bottom, 7)
+
+            if model.recording.isEmpty {
+                Text("No clicks, typing or scrolling in other apps were caught. Record again, and wiggle when you're done.")
+                    .font(.system(size: 11.5))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 10)
+            } else {
+                TextField("Name", text: $model.workflowName)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 12.5))
+                    .focused($focused)
+                    .onSubmit { model.saveRecording() }
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 6)
+                Divider().opacity(0.5)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(groups) { group in
+                            HStack(spacing: 7) {
+                                Image(systemName: group.symbol)
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 16)
+                                Text(group.title)
+                                    .font(.system(size: 11.5))
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                Spacer(minLength: 4)
+                                IconButton(symbol: "xmark", help: "Remove this step") { model.removeSteps(group.range) }
+                            }
+                            .padding(.horizontal, 10)
+                            .frame(height: 24)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .frame(maxHeight: 190)
+                .fixedSize(horizontal: false, vertical: true)
+                Divider().opacity(0.5)
+            }
+
+            HStack {
+                Button("Discard", role: .destructive) { model.discardRecording() }
+                Spacer()
+                Button("Save") { model.saveRecording() }
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(model.recording.isEmpty)
+            }
+            .controlSize(.small)
+            .padding(10)
+        }
+        .frame(width: PromptPanelController.size.width - 16)
+        .modifier(CardBackground(isBusy: false))
+        .onAppear { focused = true }
     }
 }

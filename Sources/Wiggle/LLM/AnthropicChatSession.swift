@@ -89,7 +89,7 @@ final class AnthropicChatSession: ChatSession {
                 }
             }
         } catch LLMError.server(let message) where message.contains("x-api-key") || message.contains("authentication") {
-            throw LLMError.unavailable("Your Anthropic API key was rejected. Update it in Models….")
+            throw LLMError.unavailable("Anthropic rejected your API key (\(message)). Replace it in Settings → Models.")
         }
 
         if accumulator.stopReason == "refusal" {

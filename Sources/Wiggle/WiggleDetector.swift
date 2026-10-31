@@ -20,13 +20,13 @@ final class WiggleDetector {
     func start() {
         guard monitors.isEmpty else { return }
         // Plain moves only: wiggling while dragging (windows, selections) shouldn't trigger.
-        if let global = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved, handler: { [weak self] _ in
-            MainActor.assumeIsolated { self?.handleMove() }
+        if let global = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved, handler: { [weak self] event in
+            MainActor.assumeIsolated { self?.handleMove(event) }
         }) {
             monitors.append(global)
         }
         if let local = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved, handler: { [weak self] event in
-            MainActor.assumeIsolated { self?.handleMove() }
+            MainActor.assumeIsolated { self?.handleMove(event) }
             return event
         }) {
             monitors.append(local)
@@ -38,9 +38,10 @@ final class WiggleDetector {
         monitors.removeAll()
     }
 
-    private func handleMove() {
+    private func handleMove(_ event: NSEvent) {
+        // Pointer moves from replaying a workflow aren't the user wiggling.
+        guard isEnabled, !SyntheticInput.isSynthetic(event.cgEvent) else { return }
         let point = NSEvent.mouseLocation
-        guard isEnabled else { return }
         let now = ProcessInfo.processInfo.systemUptime
         let minStroke = sensitivity.minStroke
 

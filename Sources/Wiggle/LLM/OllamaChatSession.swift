@@ -73,10 +73,10 @@ final class OllamaChatSession: ChatSession {
             return LLMError.unavailable("Can't reach Ollama at \(client.host.absoluteString). Open the Ollama app or run `ollama serve`.")
         }
         if let urlError = error as? URLError, urlError.code == .timedOut {
-            return LLMError.unavailable("\(modelName) took too long to answer. Try again, or pick a smaller model in Models….")
+            return LLMError.unavailable("\(modelName) took too long to answer. Try again, or pick a smaller model in Settings → Models.")
         }
         if case LLMError.server(let message) = error, message.contains("not found") {
-            return LLMError.unavailable("\(modelName) isn't downloaded yet. Get it from Models… in the menu bar.")
+            return LLMError.unavailable("\(modelName) isn't downloaded yet. Get it in Settings → Models.")
         }
         return error
     }

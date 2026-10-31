@@ -20,8 +20,10 @@ final class CursorGlowController {
     private var tracking: Timer?
     private var isShown = false
 
-    func show(at point: CGPoint) {
+    /// `recording` turns the ring red while a workflow is being recorded.
+    func show(at point: CGPoint, recording: Bool = false) {
         isShown = true
+        ring.setColors(recording ? Palette.recordingCGColors : Palette.spectrumCGColors)
         place(at: point)
         window.orderFrontRegardless()
         startTracking()
@@ -222,6 +224,14 @@ private final class RingView: NSView {
         }
         content.add(fade, forKey: "fade")
         content.add(shrink, forKey: "shrink")
+        CATransaction.commit()
+    }
+
+    func setColors(_ colors: [CGColor]) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        glow.colors = colors
+        ring.colors = colors
         CATransaction.commit()
     }
 

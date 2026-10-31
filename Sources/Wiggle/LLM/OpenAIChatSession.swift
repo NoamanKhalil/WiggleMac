@@ -58,7 +58,7 @@ final class OpenAIChatSession: ChatSession {
                 }
             }
         } catch LLMError.server(let message) where message.contains("API key") {
-            throw LLMError.unavailable("Your OpenAI API key was rejected. Update it in Models….")
+            throw LLMError.unavailable("Your OpenAI API key was rejected. Update it in Settings → Models.")
         }
         return text
     }

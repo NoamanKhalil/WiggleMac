@@ -26,6 +26,15 @@ final class ModelsModel {
     private(set) var hasOpenAIKey: Bool
     var anthropicKeyInput = ""
     var openAIKeyInput = ""
+    /// What checking each key found, shown under its field.
+    private(set) var keyStatus: [APIKeyCheck.Provider: KeyStatus] = [:]
+
+    enum KeyStatus: Equatable {
+        case checking
+        case valid
+        case rejected(String)
+        case unverified(String)
+    }
     var anthropicModel: String {
         didSet { settings.anthropicModel = anthropicModel }
     }
@@ -35,8 +44,8 @@ final class ModelsModel {
 
     init() {
         active = settings.model
-        hasAnthropicKey = Keychain.read(.anthropic) != nil
-        hasOpenAIKey = Keychain.read(.openai) != nil
+        hasAnthropicKey = Keychain.contains(.anthropic)
+        hasOpenAIKey = Keychain.contains(.openai)
         anthropicModel = settings.anthropicModel
         openAIModel = settings.openAIModel
     }
@@ -128,56 +137,66 @@ final class ModelsModel {
 
     // MARK: API keys
 
-    func saveAnthropicKey() {
-        Keychain.write(anthropicKeyInput.trimmingCharacters(in: .whitespacesAndNewlines), for: .anthropic)
+    /// Saves a key only once the provider accepts it; one that can't be checked (offline) is saved with a note.
+    func saveAnthropicKey() async {
+        guard let key = await checkedKey(anthropicKeyInput, for: .anthropic) else { return }
+        Keychain.write(key, for: .anthropic)
         anthropicKeyInput = ""
-        hasAnthropicKey = Keychain.read(.anthropic) != nil
+        hasAnthropicKey = Keychain.contains(.anthropic)
     }
 
     func removeAnthropicKey() {
         Keychain.write("", for: .anthropic)
         hasAnthropicKey = false
+        keyStatus[.anthropic] = nil
         if case .anthropic = active { use(fallback()) }
     }
 
-    func saveOpenAIKey() {
-        Keychain.write(openAIKeyInput.trimmingCharacters(in: .whitespacesAndNewlines), for: .openai)
+    func saveOpenAIKey() async {
+        guard let key = await checkedKey(openAIKeyInput, for: .openai) else { return }
+        Keychain.write(key, for: .openai)
         openAIKeyInput = ""
-        hasOpenAIKey = Keychain.read(.openai) != nil
+        hasOpenAIKey = Keychain.contains(.openai)
     }
 
     func removeOpenAIKey() {
         Keychain.write("", for: .openai)
         hasOpenAIKey = false
+        keyStatus[.openai] = nil
         if case .openai = active { use(fallback()) }
     }
-}
 
-@MainActor
-final class ModelsWindowController {
-    private var window: NSWindow?
-
-    func show() {
-        if window == nil {
-            let model = ModelsModel()
-            let window = NSWindow(
-                contentRect: CGRect(x: 0, y: 0, width: 460, height: 580),
-                styleMask: [.titled, .closable, .resizable, .miniaturizable],
-                backing: .buffered,
-                defer: false
-            )
-            window.title = "Wiggle Models"
-            window.isReleasedWhenClosed = false
-            window.contentView = NSHostingView(rootView: ModelsView(model: model))
-            window.center()
-            self.window = window
+    /// Checks a saved key on request, so one that stopped working (revoked, or saved wrong) says so.
+    /// Not done on its own: reading the key can make macOS ask for permission.
+    func checkSavedKey(_ provider: APIKeyCheck.Provider) async {
+        guard let key = Keychain.read(provider == .anthropic ? .anthropic : .openai) else { return }
+        keyStatus[provider] = .checking
+        switch await APIKeyCheck.check(key, for: provider) {
+        case .valid: keyStatus[provider] = .valid
+        case .unverified(let message): keyStatus[provider] = .unverified(message)
+        case .invalid(let message): keyStatus[provider] = .rejected("The saved key doesn't work: \(message) Remove it and paste a new one.")
         }
-        NSApp.activate()
-        window?.makeKeyAndOrderFront(nil)
+    }
+
+    private func checkedKey(_ input: String, for provider: APIKeyCheck.Provider) async -> String? {
+        let key = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        keyStatus[provider] = .checking
+        switch await APIKeyCheck.check(key, for: provider) {
+        case .valid:
+            keyStatus[provider] = nil
+            return key
+        case .unverified(let message):
+            keyStatus[provider] = .unverified("Saved without checking. \(message)")
+            return key
+        case .invalid(let message):
+            keyStatus[provider] = .rejected(message)
+            return nil
+        }
     }
 }
 
-private struct ModelsView: View {
+/// The Models tab of Settings.
+struct ModelsView: View {
     @Bindable var model: ModelsModel
     @State private var pendingDelete: OllamaModel?
 
@@ -311,8 +330,11 @@ private struct ModelsView: View {
                 HStack {
                     Label("API key saved in your Keychain", systemImage: "key.fill")
                     Spacer()
+                    Button("Check") { Task { await model.checkSavedKey(.anthropic) } }
+                        .disabled(model.keyStatus[.anthropic] == .checking)
                     Button("Remove", role: .destructive) { model.removeAnthropicKey() }
                 }
+                KeyStatusRow(status: model.keyStatus[.anthropic])
                 Picker("Model", selection: $model.anthropicModel) {
                     ForEach(AnthropicChatSession.models) { Text($0.name).tag($0.id) }
                 }
@@ -323,12 +345,13 @@ private struct ModelsView: View {
                 }
             } else {
                 HStack {
-                    SecureField("sk-ant-…", text: $model.anthropicKeyInput)
+                    SecureField("API key", text: $model.anthropicKeyInput, prompt: Text("sk-ant-…"))
                         .textFieldStyle(.roundedBorder)
-                        .onSubmit { model.saveAnthropicKey() }
-                    Button("Save") { model.saveAnthropicKey() }
-                        .disabled(model.anthropicKeyInput.isEmpty)
+                        .onSubmit { Task { await model.saveAnthropicKey() } }
+                    Button("Save") { Task { await model.saveAnthropicKey() } }
+                        .disabled(model.anthropicKeyInput.isEmpty || model.keyStatus[.anthropic] == .checking)
                 }
+                KeyStatusRow(status: model.keyStatus[.anthropic])
             }
         } header: {
             Text("Claude (your Anthropic API key)")
@@ -346,8 +369,11 @@ private struct ModelsView: View {
                 HStack {
                     Label("API key saved in your Keychain", systemImage: "key.fill")
                     Spacer()
+                    Button("Check") { Task { await model.checkSavedKey(.openai) } }
+                        .disabled(model.keyStatus[.openai] == .checking)
                     Button("Remove", role: .destructive) { model.removeOpenAIKey() }
                 }
+                KeyStatusRow(status: model.keyStatus[.openai])
                 TextField("Model", text: $model.openAIModel)
                 let choice = ModelChoice.openai(model.openAIModel)
                 HStack {
@@ -357,12 +383,13 @@ private struct ModelsView: View {
                 }
             } else {
                 HStack {
-                    SecureField("sk-…", text: $model.openAIKeyInput)
+                    SecureField("API key", text: $model.openAIKeyInput, prompt: Text("sk-…"))
                         .textFieldStyle(.roundedBorder)
-                        .onSubmit { model.saveOpenAIKey() }
-                    Button("Save") { model.saveOpenAIKey() }
-                        .disabled(model.openAIKeyInput.isEmpty)
+                        .onSubmit { Task { await model.saveOpenAIKey() } }
+                    Button("Save") { Task { await model.saveOpenAIKey() } }
+                        .disabled(model.openAIKeyInput.isEmpty || model.keyStatus[.openai] == .checking)
                 }
+                KeyStatusRow(status: model.keyStatus[.openai])
             }
         } header: {
             Text("OpenAI (your API key)")
@@ -460,6 +487,34 @@ private struct DownloadControl: View {
             }
             .buttonStyle(.borderless)
             .help("Download")
+        }
+    }
+}
+
+/// What checking an API key found: nothing once it works.
+private struct KeyStatusRow: View {
+    let status: ModelsModel.KeyStatus?
+
+    var body: some View {
+        switch status {
+        case .checking:
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.small)
+                Text("Checking the key…").foregroundStyle(.secondary)
+            }
+        case .valid:
+            Label("The key works.", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+        case .rejected(let message):
+            Label(message, systemImage: "xmark.octagon.fill")
+                .foregroundStyle(.red)
+                .fixedSize(horizontal: false, vertical: true)
+        case .unverified(let message):
+            Label(message, systemImage: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+                .fixedSize(horizontal: false, vertical: true)
+        case nil:
+            EmptyView()
         }
     }
 }

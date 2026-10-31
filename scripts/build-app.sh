@@ -23,6 +23,14 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Framewor
 cp "$BIN_DIR/Wiggle" "$APP/Contents/MacOS/Wiggle"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
 
+# The Photon bridge for texting Wiggle, bundled into one file; Wiggle runs it with the Mac's Node.
+if [ -d "$ROOT/photon-bridge/node_modules" ]; then
+    (cd "$ROOT/photon-bridge" && npm run --silent bundle)
+fi
+if [ -f "$ROOT/photon-bridge/dist/photon-bridge.mjs" ]; then
+    cp "$ROOT/photon-bridge/dist/photon-bridge.mjs" "$APP/Contents/Resources/photon-bridge.mjs"
+fi
+
 # Sparkle, for automatic updates. ditto keeps the framework's symlinks intact.
 ditto "$BIN_DIR/Sparkle.framework" "$APP/Contents/Frameworks/Sparkle.framework"
 install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/Wiggle"

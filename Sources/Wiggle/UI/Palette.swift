@@ -19,6 +19,11 @@ enum Palette {
         CGColor(srgbRed: $0.red, green: $0.green, blue: $0.blue, alpha: 1)
     }
 
+    /// Shades of red for the ring while recording a workflow.
+    @MainActor static let recordingCGColors: [CGColor] = [
+        (1.00, 0.23, 0.19), (1.00, 0.45, 0.40), (0.84, 0.00, 0.08), (1.00, 0.23, 0.19),
+    ].map { CGColor(srgbRed: $0.0, green: $0.1, blue: $0.2, alpha: 1) }
+
     static func sweep(angle: Angle) -> AngularGradient {
         AngularGradient(colors: spectrum, center: .center, angle: angle)
     }

@@ -1,0 +1,22 @@
+{
+  "name": "wiggle-photon-bridge",
+  "version": "1.0.0",
+  "description": "Text Wiggle from iMessage through Photon",
+  "main": "bridge.ts",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env bridge.ts",
+    "terminal": "node bridge.ts --terminal",
+    "check": "tsc -p .",
+    "bundle": "esbuild bridge.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/photon-bridge.mjs --log-level=warning --banner:js=\"import { createRequire as __wiggleRequire } from 'node:module'; const require = __wiggleRequire(import.meta.url);\""
+  },
+  "dependencies": {
+    "spectrum-ts": "^12.14.0"
+  },
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
+  }
+}
