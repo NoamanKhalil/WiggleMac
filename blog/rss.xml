@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Wiggle blog</title>
+<link>https://wigglemac.com/blog/</link>
+<description>Guides for Wiggle, the early-access Mac assistant that appears when you shake the mouse.</description>
+<item>
+<title>What is Wiggle for Mac?</title>
+<link>https://wigglemac.com/blog/what-is-wiggle/</link>
+<guid>https://wigglemac.com/blog/what-is-wiggle/</guid>
+<pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+<description>Wiggle is an early-access Mac app. Shake the mouse and an assistant appears at the cursor.</description>
+</item><item>
+<title>How to open Wiggle by shaking the mouse</title>
+<link>https://wigglemac.com/blog/shake-to-open/</link>
+<guid>https://wigglemac.com/blog/shake-to-open/</guid>
+<pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+<description>Five quick back-and-forth strokes in under a second open Wiggle at the cursor. Slow moves do not.</description>
+</item><item>
+<title>Chat, screenshot, or voice</title>
+<link>https://wigglemac.com/blog/chat-screenshot-or-voice/</link>
+<guid>https://wigglemac.com/blog/chat-screenshot-or-voice/</guid>
+<pubDate>Sun, 25 Oct 2026 00:00:00 +0000</pubDate>
+<description>Each time Wiggle opens, you pick Chat, Screenshot, or Voice. Nothing is taken until you pick it.</description>
+</item><item>
+<title>Apple Intelligence, Ollama, or your own key</title>
+<link>https://wigglemac.com/blog/which-model/</link>
+<guid>https://wigglemac.com/blog/which-model/</guid>
+<pubDate>Sat, 24 Oct 2026 00:00:00 +0000</pubDate>
+<description>Wiggle can use Apple Intelligence, a local model through Ollama, or your own Claude or OpenAI key.</description>
+</item><item>
+<title>What happens when you use your own Claude or OpenAI key</title>
+<link>https://wigglemac.com/blog/your-own-key/</link>
+<guid>https://wigglemac.com/blog/your-own-key/</guid>
+<pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+<description>A question you send with your own key goes to Claude or OpenAI. Apple Intelligence and Ollama stay on the Mac.</description>
+</item><item>
+<title>Does a Wiggle screenshot leave your Mac?</title>
+<link>https://wigglemac.com/blog/screenshots/</link>
+<guid>https://wigglemac.com/blog/screenshots/</guid>
+<pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+<description>A screenshot happens when you choose Screenshot. It is not taken in the background, and it is not licensed to advertisers.</description>
+</item><item>
+<title>Does Wiggle listen all the time?</title>
+<link>https://wigglemac.com/blog/voice/</link>
+<guid>https://wigglemac.com/blog/voice/</guid>
+<pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+<description>Voice is a mode you pick, like Chat or Screenshot. It is not an always-on microphone.</description>
+</item><item>
+<title>Wiggle does not ask you to make an account</title>
+<link>https://wigglemac.com/blog/no-account/</link>
+<guid>https://wigglemac.com/blog/no-account/</guid>
+<pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+<description>There is no Wiggle account and no analytics in the product. Email is the only message this website receives.</description>
+</item><item>
+<title>Wiggle is in early access, and there is no price yet</title>
+<link>https://wigglemac.com/blog/early-access/</link>
+<guid>https://wigglemac.com/blog/early-access/</guid>
+<pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
+<description>There is no checkout on this site. Wiggle is in early access, and this site lists no price.</description>
+</item></channel>
+</rss>
