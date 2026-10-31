@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wiggle for Mac · The assistant at your cursor</title>
-<meta name="description" content="Wiggle is an early-access Mac app. Shake your mouse and it appears at the cursor so you can chat, take a screenshot, or ask out loud about what is on screen.">
+<meta name="description" content="Wiggle is an early-access Mac app. Shake your mouse and it appears at the cursor to chat, screenshot, ask out loud, or replay clicks and typing.">
 <meta name="theme-color" content="#14121A">
 <link rel="icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@
       <div>
         <p class="eyebrow">Early access for Mac</p>
         <h1>The assistant that shows up when you’re stuck.</h1>
-        <p class="lede">Shake your mouse. Wiggle appears at the cursor, so you can chat, take a screenshot, or ask out loud about whatever is on screen.</p>
+        <p class="lede">Shake your mouse. Wiggle appears at the cursor, so you can chat, take a screenshot, or ask out loud about whatever is on screen. You can also record repetitive clicks and typing, and replay them.</p>
         <div class="cta-row">
           <a class="btn" href="mailto:hello@jabble.si?subject=Wiggle%20early%20access">Get early access</a>
           <a class="btn btn-ghost" href="#how">See how it works</a>
@@ -44,7 +44,7 @@
       </div>
       <aside class="preview" aria-label="Preview of Wiggle at the cursor">
         <p class="eyebrow">On this page</p>
-        <p class="preview-lead">Shake the pointer, or open the same three choices the app gives you.</p>
+        <p class="preview-lead">Shake the pointer, or open the same four choices the app gives you.</p>
         <button class="btn" id="open-wiggle" type="button">Open Wiggle here</button>
         <p class="hint">Five quick back-and-forth strokes. Slow moves are ignored. Nothing on this website is sent.</p>
       </aside>
@@ -73,8 +73,14 @@
         <li>
           <span>3</span>
           <div>
-            <h3>Ask about what’s there</h3>
-            <p>Pick Chat, Screenshot or Voice. Wiggle works with Apple Intelligence, a local model through Ollama, or your own Claude or OpenAI key.</p>
+            <h3>Pick Chat, Screenshot, Voice, or Workflow</h3>
+            <p>The keys are C, S, V, and W. Chat, Screenshot, and Voice ask about the screen, with Apple Intelligence, a local model through Ollama, or your own Claude or OpenAI key. Workflow records what you do and replays it.</p>
+            <ul class="picks" aria-label="Menu keys">
+              <li><kbd>C</kbd> Chat</li>
+              <li><kbd>S</kbd> Screenshot</li>
+              <li><kbd>V</kbd> Voice</li>
+              <li><kbd>W</kbd> <span class="rec-ring" aria-hidden="true"></span> Workflow</li>
+            </ul>
           </div>
         </li>
       </ol>
@@ -97,6 +103,17 @@
         <article id="voice">
           <h3>Voice</h3>
           <p>Ask out loud. Voice is a mode you pick, the same way you pick Chat or Screenshot.</p>
+        </article>
+      </div>
+      <h3 class="feature-sub">Workflow</h3>
+      <div class="cards cards-two">
+        <article id="workflow-record">
+          <h3>Record it once</h3>
+          <p>Press Record and the ring around the pointer turns red. Wiggle records clicks, double-clicks, right-clicks, drags, scrolling, typing, and keyboard shortcuts in any app. A small bar shows how many steps are recorded. Esc pauses and resumes. Nothing you do while paused is recorded, and that Esc is not recorded or passed on to the app. Wiggle again, press stop on the bar, or use the menu bar to stop. Then name the workflow, remove any stray steps, and save. Typed text shows as one step, such as Type “hello”.</p>
+        </article>
+        <article id="workflow-run">
+          <h3>Play it back</h3>
+          <p>Press play next to a saved workflow and run it 1 to 99 times in a row. It replays the same spots, at the speed you recorded. A small bar shows progress, such as “Step 3 of 14 · run 2 of 5”, and places itself away from the spots the workflow clicks. Esc pauses between steps, and Esc again resumes. A wiggle, or the stop button, stops the run. A run also stops if a display is connected or disconnected, or the Mac goes to sleep. Rename a workflow with the pencil button or by double-clicking the name, or delete it.</p>
         </article>
       </div>
     </div>
@@ -146,7 +163,7 @@
     <div class="frame"><div class="narrow">
       <p class="eyebrow">Private by design</p>
       <h2>No account. No analytics.</h2>
-      <p class="lede">Wiggle does not ask you to make an account, and the app does not ship with analytics. What you do stays with you. Anything Wiggle sends is listed for you to see. A question you send with your own Claude or OpenAI key goes to that provider, because you asked it to.</p>
+      <p class="lede">Wiggle does not ask you to make an account, and the app does not ship with analytics. What you do stays with you. Anything Wiggle sends is listed for you to see. A question you send with your own Claude or OpenAI key goes to that provider, because you asked it to. A workflow stays on your Mac, in ~/Library/Application Support/Wiggle/workflows.json, and is never sent anywhere. macOS withholds keystrokes typed into password fields, so passwords are never recorded.</p>
     </div>
     </div>
   </section>
@@ -162,8 +179,8 @@
           <p>Move the pointer back and forth five times, quickly, in under a second. A slow drag does not count.</p>
         </article>
         <article id="q-modes">
-          <h3>Three ways to ask</h3>
-          <p>Chat, Screenshot and Voice. You pick one each time Wiggle opens.</p>
+          <h3>Four choices</h3>
+          <p>Chat, Screenshot, Voice, and Workflow. You pick one each time Wiggle opens. The keys are C, S, V, and W.</p>
         </article>
         <article id="q-model">
           <h3>Which model</h3>
@@ -183,7 +200,19 @@
         </article>
         <article id="q-access">
           <h3>Early access</h3>
-          <p>Wiggle is in early access for Mac. There is no price on this site. The $0.99 and $14.99 figures are the parody, not a plan you can buy.</p>
+          <p>Wiggle is in early access for Mac. Workflow is part of that same app. There is no price on this site. The $0.99 and $14.99 figures are the parody, not a plan you can buy.</p>
+        </article>
+        <article id="q-permissions">
+          <h3>What permissions does it ask for?</h3>
+          <p>Workflow needs Accessibility. macOS asks for it the first time you record or run a workflow.</p>
+        </article>
+        <article id="q-workflow-wrong">
+          <h3>What if a workflow goes wrong?</h3>
+          <p>Esc pauses between steps. Esc again resumes. A wiggle, or the stop button, stops the run.</p>
+        </article>
+        <article id="q-workflow-limits">
+          <h3>What are the limits?</h3>
+          <p>A workflow replays fixed screen positions, so windows need to be where they were when you recorded. It does not use AI, read the screen, or adapt to changes. Esc cannot be recorded as a step.</p>
         </article>
       </div>
     </div>
@@ -205,13 +234,17 @@
 <div class="wiggle-pop" id="pop" role="dialog" aria-label="Wiggle preview" hidden>
   <p class="pop-kicker">Preview</p>
   <div id="chooser">
-    <button type="button" data-choice="chat">Chat</button>
-    <button type="button" data-choice="screenshot">Screenshot</button>
-    <button type="button" data-choice="voice">Voice</button>
+    <button type="button" data-choice="chat">Chat <kbd>C</kbd></button>
+    <button type="button" data-choice="screenshot">Screenshot <kbd>S</kbd></button>
+    <button type="button" data-choice="voice">Voice <kbd>V</kbd></button>
+    <button type="button" data-choice="workflow">Workflow <kbd>W</kbd></button>
   </div>
   <div id="detail" hidden>
     <h3 id="detail-title"></h3>
     <p id="detail-body"></p>
+    <ul id="detail-flows" hidden>
+      <li>Type “hello”</li>
+    </ul>
     <button type="button" id="detail-back">Back</button>
   </div>
 </div>
@@ -230,7 +263,7 @@
         <ul>
           <li><a href="/#how">How it works</a></li>
           <li><a href="/#demos">Demos</a></li>
-          <li><a href="/#features">Chat, screenshot, voice</a></li>
+          <li><a href="/#features">Chat, screenshot, voice, workflow</a></li>
           <li><a href="/#models">Models</a></li>
           <li><a href="/#private">Privacy</a></li>
           <li><a href="/#questions">Questions</a></li>
@@ -296,7 +329,18 @@
   const lines = {
     chat: ["Chat", "Ask about whatever is on screen. This preview on the website does not send a message."],
     screenshot: ["Screenshot", "You take a screenshot when you want Wiggle to see the screen for that question. This preview does not capture your screen."],
-    voice: ["Voice", "Voice is a mode you choose, like Chat or Screenshot. This preview does not listen."]
+    voice: ["Voice", "Voice is a mode you choose, like Chat or Screenshot. This preview does not listen."],
+    workflow: ["Workflow", "A saved workflow can show a step such as Type “hello”. Press play, then choose 1 to 99 times. The bar reads like “Step 3 of 14 · run 2 of 5”. This preview does not record, replay, or move your pointer."]
+  };
+  const flows = document.getElementById("detail-flows");
+  const showChoice = (choice) => {
+    const [title, body] = lines[choice];
+    detailTitle.textContent = title;
+    detailBody.textContent = body;
+    flows.hidden = choice !== "workflow";
+    chooser.hidden = true;
+    detail.hidden = false;
+    document.getElementById("detail-back").focus({ preventScroll: true });
   };
   const open = (x, y) => {
     chooser.hidden = false;
@@ -316,11 +360,7 @@
   chooser.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-choice]");
     if (!button) return;
-    const [title, body] = lines[button.dataset.choice];
-    detailTitle.textContent = title;
-    detailBody.textContent = body;
-    chooser.hidden = true;
-    detail.hidden = false;
+    showChoice(button.dataset.choice);
   });
   document.getElementById("detail-back").addEventListener("click", () => {
     detail.hidden = true;
@@ -331,8 +371,18 @@
     const rect = event.currentTarget.getBoundingClientRect();
     open(rect.left, rect.bottom);
   });
+  const choiceKeys = { c: "chat", s: "screenshot", v: "voice", w: "workflow" };
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !pop.hidden) close();
+    if (event.key === "Escape" && !pop.hidden) {
+      close();
+      return;
+    }
+    if (pop.hidden || chooser.hidden) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    const choice = choiceKeys[event.key.toLowerCase()];
+    if (!choice) return;
+    event.preventDefault();
+    showChoice(choice);
   });
   document.addEventListener("pointerdown", (event) => {
     if (!pop.hidden && !pop.contains(event.target) && event.target.id !== "open-wiggle") close();
