@@ -1,6 +1,6 @@
 # Wiggle does not ask you to make an account
 
-Wiggle does not ask you to make an account, and the app does not ship with analytics. This website does not sign you in. The only message we receive is an email you send yourself.
+Wiggle does not ask you to make an account, and the app does not ship with analytics. This website does not sign you in. It loads Google Tag Manager.
 
 By Noaman · October 20, 2026
 ## Key points
@@ -8,15 +8,15 @@ By Noaman · October 20, 2026
 - No Wiggle account.
 - No analytics in the product.
 - This website does not sign you in.
-- An email you send to hello@jabble.si is the only message we receive from you here.
+- This website loads Google Tag Manager.
 
 ## What a visit stores
 Reading these pages does not create a profile. There is no score, and there is no manager to send one to.
 
-Privacy (/privacy.html) is the short policy. Your data (/your-data.html) says what this website itself keeps, which is nothing beyond the email you choose to write.
+Privacy (/privacy.html) is the short policy. Your data (/your-data.html) says what this website loads, including Google Tag Manager.
 
 ## No profile
-Loading a page does not create a Wiggle profile. There is no cookie banner because this site does not run analytics and does not ask you to sign in.
+Loading a page does not create a Wiggle profile. This website loads Google Tag Manager. It does not ask you to sign in.
 
 ## Email
 Early access is an email to hello@jabble.si (mailto:hello@jabble.si). That message is the one you wrote. It is not a form that builds a score.
