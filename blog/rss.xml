@@ -5,6 +5,12 @@
 <link>https://wigglemac.com/blog/</link>
 <description>Guides for Wiggle, the early-access Mac assistant that appears when you shake the mouse.</description>
 <item>
+<title>A workflow replays the same spots</title>
+<link>https://wigglemac.com/blog/same-spots/</link>
+<guid>https://wigglemac.com/blog/same-spots/</guid>
+<pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+<description>A workflow clicks the same screen positions, at the speed you recorded. Move a window, and it still aims at the old spot.</description>
+</item><item>
 <title>Record a workflow and play it back</title>
 <link>https://wigglemac.com/blog/workflow/</link>
 <guid>https://wigglemac.com/blog/workflow/</guid>
